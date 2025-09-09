@@ -1,0 +1,93 @@
+package com.ecocollet.backend.service;
+
+import com.ecocollet.backend.model.CollectionRequest;
+import com.ecocollet.backend.model.RequestStatus;
+import com.ecocollet.backend.model.User;
+import com.ecocollet.backend.repository.CollectionRequestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@Service
+public class CollectionRequestService {
+
+    @Autowired
+    private CollectionRequestRepository collectionRequestRepository;
+
+    public List<CollectionRequest> getAllRequests() {
+        return collectionRequestRepository.findAll();
+    }
+
+    public Optional<CollectionRequest> getRequestById(Long id) {
+        return collectionRequestRepository.findById(id);
+    }
+
+    public Optional<CollectionRequest> getRequestByCode(String code) {
+        return collectionRequestRepository.findByCode(code);
+    }
+
+    public List<CollectionRequest> getRequestsByUser(User user) {
+        return collectionRequestRepository.findByUser(user);
+    }
+
+    public List<CollectionRequest> getRequestsByStatus(RequestStatus status) {
+        return collectionRequestRepository.findByStatus(status);
+    }
+
+    public List<CollectionRequest> getTodayRequests() {
+        return collectionRequestRepository.findTodayRequests();
+    }
+
+    public List<CollectionRequest> searchRequests(String searchTerm) {
+        return collectionRequestRepository.findByCodeOrUserName(searchTerm);
+    }
+
+    public CollectionRequest createRequest(CollectionRequest request, User user) {
+        // Generar código único para la solicitud
+        String requestCode = "ECO-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        request.setCode(requestCode);
+        request.setUser(user);
+        request.setStatus(RequestStatus.PENDING);
+        request.setCreatedAt(LocalDateTime.now());
+        request.setUpdatedAt(LocalDateTime.now());
+
+        return collectionRequestRepository.save(request);
+    }
+
+    public CollectionRequest updateRequest(Long id, CollectionRequest requestDetails) {
+        return collectionRequestRepository.findById(id).map(request -> {
+            if (requestDetails.getMaterial() != null) {
+                request.setMaterial(requestDetails.getMaterial());
+            }
+            if (requestDetails.getDescription() != null) {
+                request.setDescription(requestDetails.getDescription());
+            }
+            if (requestDetails.getLatitude() != null) {
+                request.setLatitude(requestDetails.getLatitude());
+            }
+            if (requestDetails.getLongitude() != null) {
+                request.setLongitude(requestDetails.getLongitude());
+            }
+            if (requestDetails.getAddress() != null) {
+                request.setAddress(requestDetails.getAddress());
+            }
+            if (requestDetails.getStatus() != null) {
+                request.setStatus(requestDetails.getStatus());
+            }
+            if (requestDetails.getWeight() != null) {
+                request.setWeight(requestDetails.getWeight());
+            }
+            request.setUpdatedAt(LocalDateTime.now());
+
+            return collectionRequestRepository.save(request);
+        }).orElse(null);
+    }
+
+    public void deleteRequest(Long id) {
+        collectionRequestRepository.deleteById(id);
+    }
+}
