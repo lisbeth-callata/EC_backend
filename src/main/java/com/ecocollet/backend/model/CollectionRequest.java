@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "collection_requests")
@@ -69,6 +70,8 @@ public class CollectionRequest {
         this.description = description;
     }
 
+
+
     // Getters y Setters (mantener todos los existentes)
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -107,8 +110,18 @@ public class CollectionRequest {
     public Double getWeight() { return weight; }
     public void setWeight(Double weight) { this.weight = weight; }
 
+    @PrePersist // ← AGREGAR ESTA ANOTACIÓN
+    public void generateCode() {
+        if (this.code == null) {
+            this.code = "ECO-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        }
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
     @PreUpdate
     public void setUpdatedAt() {
         this.updatedAt = LocalDateTime.now();
     }
+
 }

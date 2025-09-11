@@ -25,4 +25,10 @@ public interface CollectionRequestRepository extends JpaRepository<CollectionReq
     // Buscar por código o nombre de usuario
     @Query("SELECT cr FROM CollectionRequest cr WHERE cr.code LIKE %:searchTerm% OR cr.user.name LIKE %:searchTerm%")
     List<CollectionRequest> findByCodeOrUserName(@Param("searchTerm") String searchTerm);
+
+    @Query("SELECT COUNT(cr) FROM CollectionRequest cr WHERE cr.user.id = :userId")
+    int countByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT SUM(cr.weight) FROM CollectionRequest cr WHERE cr.user.id = :userId AND cr.weight IS NOT NULL")
+    Double sumWeightByUserId(@Param("userId") Long userId);
 }
