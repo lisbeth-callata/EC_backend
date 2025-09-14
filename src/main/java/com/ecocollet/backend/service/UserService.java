@@ -54,17 +54,14 @@ public class UserService {
         }).orElse(null);
     }
 
-    public ProfileDTO getUserProfileWithStats(Long userId) {
-        Optional<User> userOpt = userRepository.findById(userId);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
+    public ProfileDTO getUserProfile(Long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
 
-            // CONSULTA REAL para estadísticas
-            int totalRequests = collectionRequestRepository.countByUserId(userId);
-            Double totalWeight = collectionRequestRepository.sumWeightByUserId(userId);
-
-            // Si totalWeight es null (no hay solicitudes), usar 0.0
-            double weight = totalWeight != null ? totalWeight : 0.0;
+            // Usar queries optimizadas en lugar de cargar todas las relaciones
+            int totalRequests = userRepository.countRequestsByUserId(userId);
+            double totalWeight = userRepository.sumWeightByUserId(userId);
 
             return new ProfileDTO(
                     user.getId(),
@@ -72,10 +69,10 @@ public class UserService {
                     user.getEmail(),
                     user.getRole().name(),
                     totalRequests,
-                    weight
+                    totalWeight
             );
         }
-        return null;
+        throw new RuntimeException("Usuario no encontrado con ID: " + userId);
     }
 
     public void deleteUser(Long id) {

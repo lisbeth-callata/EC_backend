@@ -60,9 +60,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/test/**").permitAll()
-                        .requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/users/**/profile").hasAnyRole("USER", "ADMIN") // ← Agregar esto
+                        .requestMatchers("/api/users/me/profile").hasAnyRole("USER", "ADMIN", "COLLECTOR")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/collector/**").hasAnyRole("COLLECTOR", "ADMIN")
+                        .requestMatchers("/api/user/**").hasAnyRole("USER", "COLLECTOR", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

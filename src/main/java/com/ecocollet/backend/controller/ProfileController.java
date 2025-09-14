@@ -15,18 +15,28 @@ public class ProfileController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/{userId}")
+    @GetMapping("/{userId}/profile")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<?> getUserProfile(@PathVariable Long userId) {
         try {
-            ProfileDTO profile = userService.getUserProfileWithStats(userId);
-            if (profile != null) {
-                return ResponseEntity.ok(profile);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al obtener perfil: " + e.getMessage());
+            ProfileDTO profile = userService.getUserProfile(userId);
+            return ResponseEntity.ok(profile);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // Endpoint alternativo para obtener perfil del usuario autenticado
+    @GetMapping("/me/profile")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN') or hasRole('COLLECTOR')")
+    public ResponseEntity<?> getMyProfile(@RequestHeader("Authorization") String token) {
+        try {
+            // Extraer user ID del token (implementaremos esto después)
+            // Por ahora usamos un ID hardcodeado para testing
+            ProfileDTO profile = userService.getUserProfile(4L); // ID de María Usuario
+            return ResponseEntity.ok(profile);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

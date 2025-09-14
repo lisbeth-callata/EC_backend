@@ -16,7 +16,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByRole(Role role);
     List<User> findByRequestsIsNotEmpty(); // Usuarios con al menos una solicitud
     List<User> findByRequestsIsEmpty();    // Usuarios sin solicitudes
-    // Este método puede causar problemas, lo comentamos temporalmente
-    // @Query("SELECT u FROM User u LEFT JOIN FETCH u.requests WHERE u.id = :userId")
-    // Optional<User> findByIdWithRequests(@Param("userId") Long userId);
+
+    @Query("SELECT COUNT(r) FROM CollectionRequest r WHERE r.user.id = :userId")
+    int countRequestsByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT COALESCE(SUM(r.weight), 0) FROM CollectionRequest r WHERE r.user.id = :userId AND r.weight IS NOT NULL")
+    double sumWeightByUserId(@Param("userId") Long userId);
 }
