@@ -60,7 +60,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/test/**").permitAll()
-                        .requestMatchers("/api/users/**/profile").hasAnyRole("USER", "ADMIN") // ← Agregar esto
+                        .requestMatchers("/api/users/{userId}/profile").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/users/me/profile").hasAnyRole("USER", "ADMIN", "COLLECTOR")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/collector/**").hasAnyRole("COLLECTOR", "ADMIN")
