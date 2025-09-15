@@ -1,7 +1,7 @@
 package com.ecocollet.backend.security;
 
+import com.ecocollet.backend.model.Role;
 import com.ecocollet.backend.model.User;
-import com.ecocollet.backend.model.Role; // ¡Asegúrate de importar Role!
 import com.ecocollet.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,19 +21,19 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
+    public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
+        // Buscar por email o username - SOLO 1 ARGUMENTO
+        User user = userRepository.findByEmailOrUsername(identifier)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + identifier));
 
         return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
+                user.getEmail(), // Usamos email como principal
                 user.getPassword(),
-                getAuthorities(user.getRole()) // Ahora pasa el enum directamente
+                getAuthorities(user.getRole())
         );
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(Role role) {
-        // Usa role.name() que devuelve "ROLE_USER", "ROLE_ADMIN", etc.
         return Collections.singletonList(new SimpleGrantedAuthority(role.name()));
     }
 }

@@ -110,7 +110,7 @@ public class CollectionRequest {
     public Double getWeight() { return weight; }
     public void setWeight(Double weight) { this.weight = weight; }
 
-    @PrePersist // ← AGREGAR ESTA ANOTACIÓN
+    @PrePersist
     public void generateCode() {
         if (this.code == null) {
             this.code = "ECO-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();

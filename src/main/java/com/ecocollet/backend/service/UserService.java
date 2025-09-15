@@ -3,8 +3,6 @@ package com.ecocollet.backend.service;
 import com.ecocollet.backend.dto.ProfileDTO;
 import com.ecocollet.backend.model.User;
 import com.ecocollet.backend.model.Role;
-import com.ecocollet.backend.model.CollectionRequest;  // ← AGREGAR IMPORT
-import com.ecocollet.backend.repository.CollectionRequestRepository;
 import com.ecocollet.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,9 +16,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired // ← AGREGAR ESTO
-    private CollectionRequestRepository collectionRequestRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -37,6 +32,14 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public Optional<User> getUserByEmailOrUsername(String identifier) {
+        return userRepository.findByEmailOrUsername(identifier);
+    }
+
     public User createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
@@ -45,7 +48,10 @@ public class UserService {
     public User updateUser(Long id, User userDetails) {
         return userRepository.findById(id).map(user -> {
             user.setName(userDetails.getName());
+            user.setLastname(userDetails.getLastname());
+            user.setUsername(userDetails.getUsername());
             user.setEmail(userDetails.getEmail());
+            user.setPhone(userDetails.getPhone());
             if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
                 user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
             }
@@ -58,14 +64,15 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-
-            // Usar queries optimizadas en lugar de cargar todas las relaciones
             int totalRequests = userRepository.countRequestsByUserId(userId);
             double totalWeight = userRepository.sumWeightByUserId(userId);
 
             return new ProfileDTO(
                     user.getId(),
                     user.getName(),
+                    user.getUsername(),
+                    user.getLastname(),
+                    user.getPhone(),
                     user.getEmail(),
                     user.getRole().name(),
                     totalRequests,
@@ -93,5 +100,14 @@ public class UserService {
 
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    // Nuevo método para búsqueda de usuarios
+    public List<User> searchUsers(String searchTerm) {
+        return userRepository.searchUsers("%" + searchTerm + "%");
     }
 }

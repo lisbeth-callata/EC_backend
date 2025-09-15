@@ -36,24 +36,28 @@ public class AuthController {
     @Autowired
     private JwtUtils jwtUtils;
 
+    // En AuthController.java - método authenticateUser
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtUtils.generateJwtToken(authentication);
 
-            // Obtener información del usuario
-            User user = userService.getUserByEmail(loginRequest.getEmail())
+            // Buscar por email o username - USA EL MÉTODO CORREGIDO
+            User user = userService.getUserByEmailOrUsername(loginRequest.getUsername())
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
             return ResponseEntity.ok(new AuthResponse(
                     jwt,
                     user.getEmail(),
                     user.getName(),
+                    user.getUsername(),
+                    user.getPhone(),
+                    user.getLastname(),
                     user.getRole().name(),
                     user.getId()
             ));
