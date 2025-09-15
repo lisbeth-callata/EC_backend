@@ -2,6 +2,7 @@ package com.ecocollet.backend.controller;
 
 import com.ecocollet.backend.dto.AuthResponse;
 import com.ecocollet.backend.dto.LoginRequest;
+import com.ecocollet.backend.dto.RegisterResponse;
 import com.ecocollet.backend.model.User;
 import com.ecocollet.backend.model.Role;
 import com.ecocollet.backend.security.JwtUtils;
@@ -15,6 +16,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -62,23 +65,26 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
         try {
-            // Verificar si el email ya existe
             if (userService.existsByEmail(user.getEmail())) {
-                return ResponseEntity.badRequest().body("Error: El email ya está en uso");
+                return ResponseEntity.badRequest().body(
+                        new RegisterResponse("Error: El email ya está en uso", null)
+                );
             }
 
-            // Asignar rol por defecto (USER) si no se especifica
             if (user.getRole() == null) {
                 user.setRole(Role.ROLE_USER);
             }
 
-            // Crear nuevo usuario
             User newUser = userService.createUser(user);
 
-            return ResponseEntity.ok("Usuario registrado exitosamente. ID: " + newUser.getId());
+            return ResponseEntity.ok().body(
+                    new RegisterResponse("Usuario registrado exitosamente", newUser.getId())
+            );
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error en el registro: " + e.getMessage());
+            return ResponseEntity.badRequest().body(
+                    new RegisterResponse("Error en el registro: " + e.getMessage(), null)
+            );
         }
     }
 
