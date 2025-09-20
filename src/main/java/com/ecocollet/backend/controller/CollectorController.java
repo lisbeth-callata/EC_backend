@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -46,6 +48,27 @@ public class CollectorController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/collector/stats")
+    @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Integer>> getCollectorStats() {
+        Map<String, Integer> stats = new HashMap<>();
+
+        List<CollectionRequest> todayRequests = collectionRequestService.getTodayRequests();
+        int total = todayRequests.size();
+        int pending = (int) todayRequests.stream()
+                .filter(r -> r.getStatus() == RequestStatus.PENDING)
+                .count();
+        int collected = (int) todayRequests.stream()
+                .filter(r -> r.getStatus() == RequestStatus.COLLECTED)
+                .count();
+
+        stats.put("totalRequests", total);
+        stats.put("pendingRequests", pending);
+        stats.put("collectedRequests", collected);
+
+        return ResponseEntity.ok(stats);
     }
 
     // Actualizar peso y estado (para recolectores)
