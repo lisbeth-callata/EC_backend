@@ -1,9 +1,6 @@
 package com.ecocollet.backend.config;
 
-import com.ecocollet.backend.model.CollectionRequest;
-import com.ecocollet.backend.model.RequestStatus;
-import com.ecocollet.backend.model.User;
-import com.ecocollet.backend.model.Role;
+import com.ecocollet.backend.model.*;
 import com.ecocollet.backend.repository.UserRepository;
 import com.ecocollet.backend.repository.CollectionRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Component
@@ -114,7 +112,8 @@ public class DataInitializer implements CommandLineRunner {
 
     private void createTestRequests() {
         Optional<User> user = userRepository.findByEmail("usuario@ecocollet.com");
-        if (user.isPresent()) {
+        Optional<User> collector = userRepository.findByEmail("recolector@ecocollet.com");
+        if (user.isPresent() && collector.isPresent()) {
             // Crear solicitudes de prueba
             CollectionRequest request1 = new CollectionRequest();
             request1.setUser(user.get());
@@ -125,6 +124,7 @@ public class DataInitializer implements CommandLineRunner {
             request1.setAddress("Av. Lima 123, Lima");
             request1.setWeight(2.5);
             request1.setStatus(RequestStatus.COLLECTED);
+            request1.setAssignmentStatus(AssignmentStatus.COMPLETED);
             collectionRequestRepository.save(request1);
 
             CollectionRequest request2 = new CollectionRequest();
@@ -136,6 +136,7 @@ public class DataInitializer implements CommandLineRunner {
             request2.setAddress("Av. Arequipa 456, Lima");
             request2.setWeight(3.2);
             request2.setStatus(RequestStatus.COLLECTED);
+            request2.setAssignmentStatus(AssignmentStatus.COMPLETED);
             collectionRequestRepository.save(request2);
 
             // Solicitud pendiente
@@ -147,9 +148,27 @@ public class DataInitializer implements CommandLineRunner {
             request3.setLongitude(-77.0228);
             request3.setAddress("Jr. Callao 789, Lima");
             request3.setStatus(RequestStatus.PENDING);
+            request3.setAssignmentStatus(AssignmentStatus.AVAILABLE);
             collectionRequestRepository.save(request3);
 
-            System.out.println("3 solicitudes de prueba creadas para María Usuario");
+            // ✅ NUEVA: Solicitud asignada a recolector (en progreso)
+            CollectionRequest request4 = new CollectionRequest();
+            request4.setUser(user.get());
+            request4.setMaterial("Cartón");
+            request4.setDescription("Cajas de cartón");
+            request4.setLatitude(-12.0764);
+            request4.setLongitude(-77.0128);
+            request4.setAddress("Av. Brasil 321, Lima");
+            request4.setStatus(RequestStatus.PENDING);
+            request4.setAssignmentStatus(AssignmentStatus.IN_PROGRESS);
+            request4.setAssignedCollectorId(collector.get().getId());
+            request4.setAssignedCollectorName(collector.get().getName());
+            request4.setAssignedAt(LocalDateTime.now().minusMinutes(5));
+            request4.setAssignmentExpiresAt(LocalDateTime.now().plusMinutes(10));
+            collectionRequestRepository.save(request4);
+
+
+            System.out.println("4 solicitudes de prueba creadas con diferentes estados de asignación");
         }
     }
 }

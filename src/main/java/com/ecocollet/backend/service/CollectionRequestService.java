@@ -58,6 +58,10 @@ public class CollectionRequestService {
         return collectionRequestRepository.findByAssignmentStatus(AssignmentStatus.PENDING);
     }
 
+    public List<CollectionRequest> getRequestsByAssignmentStatus(AssignmentStatus status) {
+        return collectionRequestRepository.findByAssignmentStatus(status);
+    }
+
     public List<CollectionRequest> getExpiredAssignments() {
         return collectionRequestRepository.findByAssignmentStatus(AssignmentStatus.EXPIRED);
     }
@@ -112,5 +116,9 @@ public class CollectionRequestService {
             request.setUpdatedAt(LocalDateTime.now());
             return collectionRequestRepository.save(request);
         }).orElse(null);
+    }
+
+    public List<CollectionRequest> getRequestsByCollectorIdAndStatus(Long collectorId, AssignmentStatus status) {
+        return collectionRequestRepository.findByAssignedCollectorIdAndAssignmentStatus(collectorId, status);
     }
 }

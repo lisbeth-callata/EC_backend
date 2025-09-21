@@ -36,26 +36,26 @@ public class AssignmentController {
 
             CollectionRequest request = optionalRequest.get();
 
-            // Verificar si la solicitud está disponible
-            if (request.getAssignmentStatus() != AssignmentStatus.AVAILABLE) {
+            // ✅ VERIFICACIÓN SIMPLIFICADA: Solo prevenir asignación si ya está COMPLETADA
+            if (request.getAssignmentStatus() == AssignmentStatus.COMPLETED) {
                 return ResponseEntity.badRequest().body(
                         new AssignmentResponseDTO(
                                 requestId, request.getCode(), null, null,
                                 request.getAssignmentStatus(), null, null,
-                                "La solicitud no está disponible para asignación"
+                                "La solicitud ya ha sido completada"
                         )
                 );
             }
 
-            // Asignar la solicitud al recolector
+            // ✅ Asignar la solicitud al recolector (estado informativo)
             request.setAssignedCollectorId(assignmentRequest.getCollectorId());
             request.setAssignedCollectorName(assignmentRequest.getCollectorName());
-            request.setAssignmentStatus(AssignmentStatus.PENDING);
+            request.setAssignmentStatus(AssignmentStatus.IN_PROGRESS); // ✅ Cambiado a IN_PROGRESS
             request.setAssignedAt(LocalDateTime.now());
 
-            // Establecer tiempo de expiración (default 30 minutos)
+            // ✅ Tiempo de expiración más corto (15 min) ya que es solo informativo
             int timeout = assignmentRequest.getTimeoutMinutes() != null ?
-                    assignmentRequest.getTimeoutMinutes() : 30;
+                    assignmentRequest.getTimeoutMinutes() : 15;
             request.setAssignmentExpiresAt(LocalDateTime.now().plusMinutes(timeout));
 
             CollectionRequest updatedRequest = collectionRequestService.updateRequest(requestId, request);
@@ -65,7 +65,8 @@ public class AssignmentController {
                             updatedRequest.getId(), updatedRequest.getCode(),
                             updatedRequest.getAssignedCollectorId(), updatedRequest.getAssignedCollectorName(),
                             updatedRequest.getAssignmentStatus(), updatedRequest.getAssignedAt(),
-                            updatedRequest.getAssignmentExpiresAt(), "Solicitud asignada exitosamente"
+                            updatedRequest.getAssignmentExpiresAt(),
+                            "✅ En camino: Ahora otros recolectores saben que estás atendiendo esta solicitud"
                     )
             );
 

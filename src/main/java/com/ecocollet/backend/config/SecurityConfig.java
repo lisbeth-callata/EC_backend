@@ -69,9 +69,13 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+
                         .requestMatchers("/api/test/**").permitAll()
-                        .requestMatchers("/api/requests/**").authenticated()
-                        .requestMatchers("/api/assignments/**").authenticated()
+                        .requestMatchers("/api/requests/**").hasAnyRole("USER", "COLLECTOR", "ADMIN")
+                        .requestMatchers("/api/requests/{id}").hasAnyRole("USER", "COLLECTOR", "ADMIN")
+                        .requestMatchers("/api/requests/{id}/update").hasAnyRole("COLLECTOR", "ADMIN")
+
+                        .requestMatchers("/api/assignments/**").hasAnyRole("COLLECTOR", "ADMIN")
                         .requestMatchers("/api/users/**").authenticated()
                         .requestMatchers("/api/users/{userId}/profile").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/users/me/profile").hasAnyRole("USER", "ADMIN", "COLLECTOR")

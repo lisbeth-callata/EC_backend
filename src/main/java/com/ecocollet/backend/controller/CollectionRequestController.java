@@ -26,7 +26,7 @@ public class CollectionRequestController {
 
     // Obtener todas las solicitudes (solo admin)
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COLLECTOR')")
     public ResponseEntity<List<CollectionRequest>> getAllRequests() {
         return ResponseEntity.ok(collectionRequestService.getAllRequests());
     }
@@ -114,7 +114,7 @@ public class CollectionRequestController {
 
     // Buscar solicitudes por código o nombre
     @GetMapping("/search")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COLLECTOR')")
     public ResponseEntity<List<CollectionRequest>> searchRequests(@RequestParam String term) {
         return ResponseEntity.ok(collectionRequestService.searchRequests(term));
     }

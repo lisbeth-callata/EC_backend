@@ -1,6 +1,7 @@
 package com.ecocollet.backend.controller;
 
 import com.ecocollet.backend.dto.CollectionRequestResponseDTO;
+import com.ecocollet.backend.model.AssignmentStatus;
 import com.ecocollet.backend.model.CollectionRequest;
 import com.ecocollet.backend.model.RequestStatus;
 import com.ecocollet.backend.service.CollectionRequestService;
@@ -86,6 +87,47 @@ public class CollectorController {
 
             CollectionRequest updated = collectionRequestService.updateRequest(id, request);
             return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PatchMapping("/requests/{requestId}")
+    @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
+    public ResponseEntity<?> updateRequestForCollector(
+            @PathVariable Long requestId,
+            @RequestParam(required = false) Double weight,
+            @RequestParam(required = false) String status) {
+
+        try {
+            CollectionRequest request = collectionRequestService.getRequestById(requestId)
+                    .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+
+            // Actualizar peso si se proporciona
+            if (weight != null) {
+                request.setWeight(weight);
+            }
+
+            // Actualizar estado si se proporciona
+            if (status != null) {
+                try {
+                    RequestStatus newStatus = RequestStatus.valueOf(status.toUpperCase());
+                    request.setStatus(newStatus);
+
+                    // ✅ Si se marca como COLLECTED, liberar la asignación automáticamente
+                    if (newStatus == RequestStatus.COLLECTED) {
+                        request.setAssignmentStatus(AssignmentStatus.COMPLETED);
+                        request.setAssignedCollectorId(null);
+                        request.setAssignedCollectorName(null);
+                    }
+                } catch (IllegalArgumentException e) {
+                    return ResponseEntity.badRequest().body("Estado no válido: " + status);
+                }
+            }
+
+            CollectionRequest updatedRequest = collectionRequestService.updateRequest(requestId, request);
+            return ResponseEntity.ok(updatedRequest);
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
