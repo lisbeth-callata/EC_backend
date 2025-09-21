@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import com.ecocollet.backend.model.AssignmentStatus;
+import java.time.LocalDateTime;
 
 @Repository
 public interface CollectionRequestRepository extends JpaRepository<CollectionRequest, Long> {
@@ -17,6 +19,17 @@ public interface CollectionRequestRepository extends JpaRepository<CollectionReq
     List<CollectionRequest> findByUser(User user);
     List<CollectionRequest> findByStatus(RequestStatus status);
     List<CollectionRequest> findByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate);
+    List<CollectionRequest> findByAssignedCollectorId(Long collectorId);
+    List<CollectionRequest> findByAssignmentStatus(AssignmentStatus status);
+
+    List<CollectionRequest> findByAssignmentStatusAndAssignmentExpiresAtBefore(
+            AssignmentStatus status, LocalDateTime expiryTime);
+
+    List<CollectionRequest> findByAssignmentStatusAndAssignedAtBefore(
+            AssignmentStatus status, LocalDateTime assignedTime);
+
+    List<CollectionRequest> findByAssignedCollectorIdAndAssignmentStatus(
+            Long collectorId, AssignmentStatus status);
 
     // Solicitudes del día actual para el recolector
     @Query("SELECT cr FROM CollectionRequest cr WHERE DATE(cr.createdAt) = CURRENT_DATE")

@@ -43,7 +43,6 @@ public class CollectionRequest {
     @Column(name = "address")
     private String address;
 
-    // CAMBIO IMPORTANTE: Usar EnumType en lugar de String
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private RequestStatus status;
@@ -56,6 +55,22 @@ public class CollectionRequest {
 
     @Column(name = "weight")
     private Double weight;
+
+    @Column(name = "assigned_collector_id")
+    private Long assignedCollectorId;
+
+    @Column(name = "assigned_collector_name")
+    private String assignedCollectorName;
+
+    @Column(name = "assigned_at")
+    private LocalDateTime assignedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "assignment_status")
+    private AssignmentStatus assignmentStatus = AssignmentStatus.AVAILABLE;
+
+    @Column(name = "assignment_expires_at")
+    private LocalDateTime assignmentExpiresAt;
 
     // Constructores
     public CollectionRequest() {
@@ -111,6 +126,21 @@ public class CollectionRequest {
 
     public Double getWeight() { return weight; }
     public void setWeight(Double weight) { this.weight = weight; }
+
+    public Long getAssignedCollectorId() { return assignedCollectorId; }
+    public void setAssignedCollectorId(Long assignedCollectorId) { this.assignedCollectorId = assignedCollectorId; }
+
+    public String getAssignedCollectorName() { return assignedCollectorName; }
+    public void setAssignedCollectorName(String assignedCollectorName) { this.assignedCollectorName = assignedCollectorName; }
+
+    public LocalDateTime getAssignedAt() { return assignedAt; }
+    public void setAssignedAt(LocalDateTime assignedAt) { this.assignedAt = assignedAt; }
+
+    public AssignmentStatus getAssignmentStatus() { return assignmentStatus; }
+    public void setAssignmentStatus(AssignmentStatus assignmentStatus) { this.assignmentStatus = assignmentStatus; }
+
+    public LocalDateTime getAssignmentExpiresAt() { return assignmentExpiresAt; }
+    public void setAssignmentExpiresAt(LocalDateTime assignmentExpiresAt) { this.assignmentExpiresAt = assignmentExpiresAt; }
 
     @PrePersist
     public void generateCode() {

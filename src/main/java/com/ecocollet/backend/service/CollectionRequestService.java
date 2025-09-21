@@ -6,7 +6,7 @@ import com.ecocollet.backend.model.User;
 import com.ecocollet.backend.repository.CollectionRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.ecocollet.backend.model.AssignmentStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +44,22 @@ public class CollectionRequestService {
 
     public List<CollectionRequest> searchRequests(String searchTerm) {
         return collectionRequestRepository.findByCodeOrUserName(searchTerm);
+    }
+
+    public List<CollectionRequest> getRequestsByCollectorId(Long collectorId) {
+        return collectionRequestRepository.findByAssignedCollectorId(collectorId);
+    }
+
+    public List<CollectionRequest> getAvailableRequests() {
+        return collectionRequestRepository.findByAssignmentStatus(AssignmentStatus.AVAILABLE);
+    }
+
+    public List<CollectionRequest> getPendingAssignments() {
+        return collectionRequestRepository.findByAssignmentStatus(AssignmentStatus.PENDING);
+    }
+
+    public List<CollectionRequest> getExpiredAssignments() {
+        return collectionRequestRepository.findByAssignmentStatus(AssignmentStatus.EXPIRED);
     }
 
     public CollectionRequest createRequest(CollectionRequest request, User user) {
@@ -89,5 +105,12 @@ public class CollectionRequestService {
 
     public void deleteRequest(Long id) {
         collectionRequestRepository.deleteById(id);
+    }
+    public CollectionRequest updateAssignmentStatus(Long id, AssignmentStatus status) {
+        return collectionRequestRepository.findById(id).map(request -> {
+            request.setAssignmentStatus(status);
+            request.setUpdatedAt(LocalDateTime.now());
+            return collectionRequestRepository.save(request);
+        }).orElse(null);
     }
 }
