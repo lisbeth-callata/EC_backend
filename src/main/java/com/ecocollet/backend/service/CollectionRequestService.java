@@ -4,13 +4,16 @@ import com.ecocollet.backend.model.CollectionRequest;
 import com.ecocollet.backend.model.RequestStatus;
 import com.ecocollet.backend.model.User;
 import com.ecocollet.backend.repository.CollectionRequestRepository;
+import com.ecocollet.backend.dto.CollectionRequestFullDTO;
+import com.ecocollet.backend.model.AssignmentStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ecocollet.backend.model.AssignmentStatus;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CollectionRequestService {
@@ -18,8 +21,9 @@ public class CollectionRequestService {
     @Autowired
     private CollectionRequestRepository collectionRequestRepository;
 
+    // Métodos existentes...
     public List<CollectionRequest> getAllRequests() {
-        return collectionRequestRepository.findAll();
+        return collectionRequestRepository.findAllWithUser(); // Modificado
     }
 
     public Optional<CollectionRequest> getRequestById(Long id) {
@@ -67,7 +71,6 @@ public class CollectionRequestService {
     }
 
     public CollectionRequest createRequest(CollectionRequest request, User user) {
-        // Generar código único para la solicitud
         String requestCode = "ECO-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         request.setCode(requestCode);
         request.setUser(user);
@@ -110,6 +113,7 @@ public class CollectionRequestService {
     public void deleteRequest(Long id) {
         collectionRequestRepository.deleteById(id);
     }
+
     public CollectionRequest updateAssignmentStatus(Long id, AssignmentStatus status) {
         return collectionRequestRepository.findById(id).map(request -> {
             request.setAssignmentStatus(status);
@@ -120,5 +124,66 @@ public class CollectionRequestService {
 
     public List<CollectionRequest> getRequestsByCollectorIdAndStatus(Long collectorId, AssignmentStatus status) {
         return collectionRequestRepository.findByAssignedCollectorIdAndAssignmentStatus(collectorId, status);
+    }
+
+    // NUEVOS MÉTODOS PARA MANEJAR DTOs COMPLETOS
+
+    public List<CollectionRequestFullDTO> getAllRequestsWithUserInfo() {
+        List<CollectionRequest> requests = collectionRequestRepository.findAllWithUser();
+        return convertToFullDTOList(requests);
+    }
+
+    public List<CollectionRequestFullDTO> getTodayRequestsWithUserInfo() {
+        List<CollectionRequest> requests = collectionRequestRepository.findTodayRequests();
+        return convertToFullDTOList(requests);
+    }
+
+    public List<CollectionRequestFullDTO> getAvailableRequestsWithUserInfo() {
+        List<CollectionRequest> requests = collectionRequestRepository.findAvailableRequestsWithUser();
+        return convertToFullDTOList(requests);
+    }
+
+    public List<CollectionRequestFullDTO> searchRequestsWithUserInfo(String searchTerm) {
+        List<CollectionRequest> requests = collectionRequestRepository.findByCodeOrUserName(searchTerm);
+        return convertToFullDTOList(requests);
+    }
+
+    private List<CollectionRequestFullDTO> convertToFullDTOList(List<CollectionRequest> requests) {
+        return requests.stream()
+                .map(this::convertToFullDTO)
+                .collect(Collectors.toList());
+    }
+
+    public CollectionRequestFullDTO convertToFullDTO(CollectionRequest request) {
+        CollectionRequestFullDTO dto = new CollectionRequestFullDTO();
+        dto.setId(request.getId());
+        dto.setCode(request.getCode());
+        dto.setMaterial(request.getMaterial());
+        dto.setDescription(request.getDescription());
+        dto.setLatitude(request.getLatitude());
+        dto.setLongitude(request.getLongitude());
+        dto.setAddress(request.getAddress());
+        dto.setStatus(request.getStatus());
+        dto.setCreatedAt(request.getCreatedAt());
+        dto.setUpdatedAt(request.getUpdatedAt());
+        dto.setWeight(request.getWeight());
+
+        // Información del usuario
+        if (request.getUser() != null) {
+            dto.setUserId(request.getUser().getId());
+            dto.setUserName(request.getUser().getName());
+            dto.setUserLastname(request.getUser().getLastname());
+            dto.setUserEmail(request.getUser().getEmail());
+            dto.setUserPhone(request.getUser().getPhone());
+        }
+
+        // Información de asignación
+        dto.setAssignedCollectorId(request.getAssignedCollectorId());
+        dto.setAssignedCollectorName(request.getAssignedCollectorName());
+        dto.setAssignedAt(request.getAssignedAt());
+        dto.setAssignmentExpiresAt(request.getAssignmentExpiresAt());
+        dto.setAssignmentStatus(request.getAssignmentStatus());
+
+        return dto;
     }
 }

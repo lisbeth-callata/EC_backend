@@ -162,11 +162,10 @@ public class DataInitializer implements CommandLineRunner {
             request4.setStatus(RequestStatus.PENDING);
             request4.setAssignmentStatus(AssignmentStatus.IN_PROGRESS);
             request4.setAssignedCollectorId(collector.get().getId());
-            request4.setAssignedCollectorName(collector.get().getName());
+            request4.setAssignedCollectorName(collector.get().getName() + " " + collector.get().getLastname());
             request4.setAssignedAt(LocalDateTime.now().minusMinutes(5));
             request4.setAssignmentExpiresAt(LocalDateTime.now().plusMinutes(10));
             collectionRequestRepository.save(request4);
-
 
             System.out.println("4 solicitudes de prueba creadas con diferentes estados de asignación");
         }

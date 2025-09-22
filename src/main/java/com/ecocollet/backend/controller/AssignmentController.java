@@ -2,6 +2,7 @@ package com.ecocollet.backend.controller;
 
 import com.ecocollet.backend.dto.AssignmentRequestDTO;
 import com.ecocollet.backend.dto.AssignmentResponseDTO;
+import com.ecocollet.backend.dto.CollectionRequestFullDTO;
 import com.ecocollet.backend.model.AssignmentStatus;
 import com.ecocollet.backend.model.CollectionRequest;
 import com.ecocollet.backend.service.CollectionRequestService;
@@ -22,7 +23,7 @@ public class AssignmentController {
     @Autowired
     private CollectionRequestService collectionRequestService;
 
-    // Reclamar una solicitud disponible
+    // Reclamar una solicitud disponible - MODIFICADO para incluir nombre del recolector
     @PostMapping("/claim/{requestId}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<?> claimRequest(@PathVariable Long requestId,
@@ -75,7 +76,7 @@ public class AssignmentController {
         }
     }
 
-    // Liberar una solicitud asignada
+    // Liberar una solicitud asignada - MANTENIDO igual
     @PostMapping("/release/{requestId}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<?> releaseRequest(@PathVariable Long requestId) {
@@ -110,7 +111,7 @@ public class AssignmentController {
         }
     }
 
-    // Completar una solicitud asignada
+    // Completar una solicitud asignada - MANTENIDO igual
     @PostMapping("/complete/{requestId}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<?> completeRequest(@PathVariable Long requestId) {
@@ -145,23 +146,29 @@ public class AssignmentController {
         }
     }
 
-    // Obtener solicitudes asignadas a un recolector
+    // Obtener solicitudes asignadas a un recolector - MODIFICADO para usar DTO completo
     @GetMapping("/collector/{collectorId}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
-    public ResponseEntity<List<CollectionRequest>> getCollectorAssignments(@PathVariable Long collectorId) {
+    public ResponseEntity<List<CollectionRequestFullDTO>> getCollectorAssignments(@PathVariable Long collectorId) {
         List<CollectionRequest> assignments = collectionRequestService.getRequestsByCollectorId(collectorId);
-        return ResponseEntity.ok(assignments);
+        List<CollectionRequestFullDTO> dtos = assignments.stream()
+                .map(collectionRequestService::convertToFullDTO)
+                .collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
-    // Obtener solicitudes disponibles (no asignadas)
+    // Obtener solicitudes disponibles (no asignadas) - MODIFICADO para usar DTO completo
     @GetMapping("/available")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
-    public ResponseEntity<List<CollectionRequest>> getAvailableRequests() {
+    public ResponseEntity<List<CollectionRequestFullDTO>> getAvailableRequests() {
         List<CollectionRequest> availableRequests = collectionRequestService.getAvailableRequests();
-        return ResponseEntity.ok(availableRequests);
+        List<CollectionRequestFullDTO> dtos = availableRequests.stream()
+                .map(collectionRequestService::convertToFullDTO)
+                .collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
-    // Actualizar estado de una asignación
+    // Actualizar estado de una asignación - MANTENIDO igual
     @PutMapping("/{requestId}/status/{status}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<?> updateAssignmentStatus(@PathVariable Long requestId,

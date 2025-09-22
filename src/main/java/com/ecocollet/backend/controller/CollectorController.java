@@ -1,5 +1,6 @@
 package com.ecocollet.backend.controller;
 
+import com.ecocollet.backend.dto.CollectionRequestFullDTO;
 import com.ecocollet.backend.dto.CollectionRequestResponseDTO;
 import com.ecocollet.backend.model.AssignmentStatus;
 import com.ecocollet.backend.model.CollectionRequest;
@@ -23,31 +24,11 @@ public class CollectorController {
     @Autowired
     private CollectionRequestService collectionRequestService;
 
-    // Dashboard del recolector - solicitudes del día
+    // Dashboard del recolector - solicitudes del día - MODIFICADO para usar DTO completo
     @GetMapping("/dashboard")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
-    public ResponseEntity<List<CollectionRequestResponseDTO>> getCollectorDashboard() {
-        List<CollectionRequest> requests = collectionRequestService.getTodayRequests();
-
-        // Convertir a DTOs
-        List<CollectionRequestResponseDTO> dtos = requests.stream()
-                .map(request -> new CollectionRequestResponseDTO(
-                        request.getId(),
-                        request.getCode(),
-                        request.getMaterial(),
-                        request.getDescription(),
-                        request.getLatitude(),
-                        request.getLongitude(),
-                        request.getAddress(),
-                        request.getStatus(),
-                        request.getCreatedAt(),
-                        request.getUpdatedAt(),
-                        request.getWeight(),
-                        request.getUser().getId(),
-                        request.getUser().getName()
-                ))
-                .collect(Collectors.toList());
-
+    public ResponseEntity<List<CollectionRequestFullDTO>> getCollectorDashboard() {
+        List<CollectionRequestFullDTO> dtos = collectionRequestService.getTodayRequestsWithUserInfo();
         return ResponseEntity.ok(dtos);
     }
 
@@ -72,7 +53,7 @@ public class CollectorController {
         return ResponseEntity.ok(stats);
     }
 
-    // Actualizar peso y estado (para recolectores)
+    // Actualizar peso y estado (para recolectores) - MANTENIDO igual
     @PutMapping("/requests/{id}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<?> updateRequestStatus(@PathVariable Long id,
@@ -131,5 +112,16 @@ public class CollectorController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
+    }
+
+    // NUEVO: Obtener solicitudes asignadas al recolector actual con información completa
+    @GetMapping("/my-assignments/{collectorId}")
+    @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
+    public ResponseEntity<List<CollectionRequestFullDTO>> getMyAssignments(@PathVariable Long collectorId) {
+        List<CollectionRequest> requests = collectionRequestService.getRequestsByCollectorId(collectorId);
+        List<CollectionRequestFullDTO> dtos = requests.stream()
+                .map(collectionRequestService::convertToFullDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 }

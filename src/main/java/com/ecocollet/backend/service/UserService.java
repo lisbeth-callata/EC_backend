@@ -110,4 +110,9 @@ public class UserService {
     public List<User> searchUsers(String searchTerm) {
         return userRepository.searchUsers("%" + searchTerm + "%");
     }
+
+    // NUEVO: Método para obtener recolectores activos
+    public List<User> getActiveCollectors() {
+        return userRepository.findByRole(Role.ROLE_COLLECTOR);
+    }
 }
