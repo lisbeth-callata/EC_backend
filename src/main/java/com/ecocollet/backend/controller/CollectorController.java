@@ -45,35 +45,13 @@ public class CollectorController {
         int collected = (int) todayRequests.stream()
                 .filter(r -> r.getStatus() == RequestStatus.COLLECTED)
                 .count();
-
         stats.put("totalRequests", total);
         stats.put("pendingRequests", pending);
         stats.put("collectedRequests", collected);
-
         return ResponseEntity.ok(stats);
     }
 
-    // Actualizar peso y estado (para recolectores) - MANTENIDO igual
-    @PutMapping("/requests/{id}")
-    @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
-    public ResponseEntity<?> updateRequestStatus(@PathVariable Long id,
-                                                 @RequestParam Double weight,
-                                                 @RequestParam String status) {
-        try {
-            CollectionRequest request = collectionRequestService.getRequestById(id)
-                    .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
-
-            request.setWeight(weight);
-            request.setStatus(RequestStatus.valueOf(status.toUpperCase()));
-
-            CollectionRequest updated = collectionRequestService.updateRequest(id, request);
-            return ResponseEntity.ok(updated);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
-        }
-    }
-
-    @PatchMapping("/requests/{requestId}")
+    @PatchMapping("/collector/requests/{requestId}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<?> updateRequestForCollector(
             @PathVariable Long requestId,
@@ -84,18 +62,14 @@ public class CollectorController {
             CollectionRequest request = collectionRequestService.getRequestById(requestId)
                     .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
 
-            // Actualizar peso si se proporciona
             if (weight != null) {
                 request.setWeight(weight);
             }
-
-            // Actualizar estado si se proporciona
             if (status != null) {
                 try {
                     RequestStatus newStatus = RequestStatus.valueOf(status.toUpperCase());
                     request.setStatus(newStatus);
 
-                    // ✅ Si se marca como COLLECTED, liberar la asignación automáticamente
                     if (newStatus == RequestStatus.COLLECTED) {
                         request.setAssignmentStatus(AssignmentStatus.COMPLETED);
                         request.setAssignedCollectorId(null);
