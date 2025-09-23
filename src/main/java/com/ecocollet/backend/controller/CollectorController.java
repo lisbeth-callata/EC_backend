@@ -32,7 +32,7 @@ public class CollectorController {
         return ResponseEntity.ok(dtos);
     }
 
-    @GetMapping("/collector/stats")
+    @GetMapping("/stats")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<Map<String, Integer>> getCollectorStats() {
         Map<String, Integer> stats = new HashMap<>();
@@ -51,7 +51,7 @@ public class CollectorController {
         return ResponseEntity.ok(stats);
     }
 
-    @PatchMapping("/collector/requests/{requestId}")
+    @PatchMapping("/requests/{requestId}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<?> updateRequestForCollector(
             @PathVariable Long requestId,
@@ -88,7 +88,6 @@ public class CollectorController {
         }
     }
 
-    // NUEVO: Obtener solicitudes asignadas al recolector actual con información completa
     @GetMapping("/my-assignments/{collectorId}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<List<CollectionRequestFullDTO>> getMyAssignments(@PathVariable Long collectorId) {

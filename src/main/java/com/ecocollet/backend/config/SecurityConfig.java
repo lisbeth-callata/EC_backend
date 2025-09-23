@@ -74,7 +74,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/requests/**").hasAnyRole("USER", "COLLECTOR", "ADMIN")
                         .requestMatchers("/api/requests/{id}").hasAnyRole("USER", "COLLECTOR", "ADMIN")
                         .requestMatchers("/api/requests/{id}/update").hasAnyRole("COLLECTOR", "ADMIN")
-
+                        .requestMatchers("/api/collector/requests/**").hasAnyRole("COLLECTOR", "ADMIN")
                         .requestMatchers("/api/assignments/**").hasAnyRole("COLLECTOR", "ADMIN")
                         .requestMatchers("/api/users/**").authenticated()
                         .requestMatchers("/api/users/{userId}/profile").hasAnyRole("USER", "ADMIN")
