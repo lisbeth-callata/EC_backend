@@ -1,6 +1,7 @@
 package com.ecocollet.backend.service;
 
 import com.ecocollet.backend.dto.ProfileDTO;
+import com.ecocollet.backend.dto.WeightSummaryDTO;
 import com.ecocollet.backend.model.User;
 import com.ecocollet.backend.model.Role;
 import com.ecocollet.backend.repository.UserRepository;
@@ -106,13 +107,14 @@ public class UserService {
         return userRepository.existsByUsername(username);
     }
 
-    // Nuevo método para búsqueda de usuarios
     public List<User> searchUsers(String searchTerm) {
         return userRepository.searchUsers("%" + searchTerm + "%");
     }
 
-    // NUEVO: Método para obtener recolectores activos
     public List<User> getActiveCollectors() {
         return userRepository.findByRole(Role.ROLE_COLLECTOR);
+    }
+    public List<WeightSummaryDTO> getUsersWeightSummary() {
+        return userRepository.findUsersWithWeightSummary();
     }
 }

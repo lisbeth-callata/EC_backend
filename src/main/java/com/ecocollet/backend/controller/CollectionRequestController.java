@@ -25,14 +25,14 @@ public class CollectionRequestController {
     @Autowired
     private UserService userService;
 
-    // Obtener todas las solicitudes (solo admin) - MODIFICADO para usar DTO completo
+    // Obtener todas las solicitudes (solo admin)
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('COLLECTOR')")
     public ResponseEntity<List<CollectionRequestFullDTO>> getAllRequests() {
         return ResponseEntity.ok(collectionRequestService.getAllRequestsWithUserInfo());
     }
 
-    // Obtener solicitudes por usuario - MODIFICADO para usar DTO completo
+    // Obtener solicitudes por usuario
     @GetMapping("/user/{userId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<CollectionRequestFullDTO>> getRequestsByUser(@PathVariable Long userId) {
@@ -47,14 +47,13 @@ public class CollectionRequestController {
         return ResponseEntity.notFound().build();
     }
 
-    // Obtener solicitudes del día (para recolectores) - MODIFICADO para usar DTO completo
+    // Obtener solicitudes del día (para recolectores)
     @GetMapping("/today")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<List<CollectionRequestFullDTO>> getTodayRequests() {
         return ResponseEntity.ok(collectionRequestService.getTodayRequestsWithUserInfo());
     }
 
-    // Crear nueva solicitud - MANTENIDO igual
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> createRequest(@RequestBody CollectionRequest request,
@@ -89,7 +88,6 @@ public class CollectionRequestController {
         }
     }
 
-    // Actualizar solicitud (para recolectores y admin) - MANTENIDO igual
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<?> updateRequest(@PathVariable Long id,
@@ -105,7 +103,6 @@ public class CollectionRequestController {
         }
     }
 
-    // Eliminar solicitud - MANTENIDO igual
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteRequest(@PathVariable Long id) {
@@ -117,14 +114,14 @@ public class CollectionRequestController {
         }
     }
 
-    // Buscar solicitudes por código o nombre - MODIFICADO para usar DTO completo
+    // Buscar solicitudes por código o nombre
     @GetMapping("/search")
     @PreAuthorize("hasRole('ADMIN') or hasRole('COLLECTOR')")
     public ResponseEntity<List<CollectionRequestFullDTO>> searchRequests(@RequestParam String term) {
         return ResponseEntity.ok(collectionRequestService.searchRequestsWithUserInfo(term));
     }
 
-    // NUEVO: Obtener solicitudes disponibles con información completa
+    //  Obtener solicitudes disponibles con información completa
     @GetMapping("/available")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<List<CollectionRequestFullDTO>> getAvailableRequests() {

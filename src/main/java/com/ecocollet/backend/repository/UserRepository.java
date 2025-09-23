@@ -1,5 +1,6 @@
 package com.ecocollet.backend.repository;
 
+import com.ecocollet.backend.dto.WeightSummaryDTO;
 import com.ecocollet.backend.model.User;
 import com.ecocollet.backend.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
 
-    // En UserRepository.java - EL MÉTODO DEBE RECIBIR SOLO 1 PARÁMETRO
     @Query("SELECT u FROM User u WHERE u.email = :identifier OR u.username = :identifier")
     Optional<User> findByEmailOrUsername(@Param("identifier") String identifier);
 
@@ -34,4 +34,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT COALESCE(SUM(r.weight), 0) FROM CollectionRequest r WHERE r.user.id = :userId AND r.weight IS NOT NULL")
     double sumWeightByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT new com.ecocollet.backend.dto.WeightSummaryDTO(" +
+            "u.id, u.name, u.lastname, u.email, " +
+            "COUNT(r), COALESCE(SUM(r.weight), 0.0)) " +  // 0.0 en lugar de 0
+            "FROM User u LEFT JOIN u.requests r " +
+            "WHERE r.weight IS NOT NULL " +
+            "GROUP BY u.id, u.name, u.lastname, u.email " +
+            "HAVING COUNT(r) > 0 " +
+            "ORDER BY COALESCE(SUM(r.weight), 0.0) DESC")
+    List<WeightSummaryDTO> findUsersWithWeightSummary();
 }

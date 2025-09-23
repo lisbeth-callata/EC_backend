@@ -23,7 +23,6 @@ public class AssignmentController {
     @Autowired
     private CollectionRequestService collectionRequestService;
 
-    // Reclamar una solicitud disponible - MODIFICADO para incluir nombre del recolector
     @PostMapping("/claim/{requestId}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<?> claimRequest(@PathVariable Long requestId,
@@ -37,24 +36,21 @@ public class AssignmentController {
 
             CollectionRequest request = optionalRequest.get();
 
-            // ✅ VERIFICACIÓN SIMPLIFICADA: Solo prevenir asignación si ya está COMPLETADA
             if (request.getAssignmentStatus() == AssignmentStatus.COMPLETED) {
                 return ResponseEntity.badRequest().body(
                         new AssignmentResponseDTO(
                                 requestId, request.getCode(), null, null,
                                 request.getAssignmentStatus(), null, null,
-                                "La solicitud ya ha sido completada"
+                                "✅ La solicitud ya ha sido completada"
                         )
                 );
             }
 
-            // ✅ Asignar la solicitud al recolector (estado informativo)
             request.setAssignedCollectorId(assignmentRequest.getCollectorId());
             request.setAssignedCollectorName(assignmentRequest.getCollectorName());
-            request.setAssignmentStatus(AssignmentStatus.IN_PROGRESS); // ✅ Cambiado a IN_PROGRESS
+            request.setAssignmentStatus(AssignmentStatus.IN_PROGRESS);
             request.setAssignedAt(LocalDateTime.now());
 
-            // ✅ Tiempo de expiración más corto (15 min) ya que es solo informativo
             int timeout = assignmentRequest.getTimeoutMinutes() != null ?
                     assignmentRequest.getTimeoutMinutes() : 15;
             request.setAssignmentExpiresAt(LocalDateTime.now().plusMinutes(timeout));
@@ -76,7 +72,6 @@ public class AssignmentController {
         }
     }
 
-    // Liberar una solicitud asignada - MANTENIDO igual
     @PostMapping("/release/{requestId}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<?> releaseRequest(@PathVariable Long requestId) {
@@ -89,7 +84,6 @@ public class AssignmentController {
 
             CollectionRequest request = optionalRequest.get();
 
-            // Liberar la asignación
             request.setAssignedCollectorId(null);
             request.setAssignedCollectorName(null);
             request.setAssignmentStatus(AssignmentStatus.AVAILABLE);
@@ -102,7 +96,7 @@ public class AssignmentController {
                     new AssignmentResponseDTO(
                             updatedRequest.getId(), updatedRequest.getCode(),
                             null, null, AssignmentStatus.AVAILABLE, null, null,
-                            "Solicitud liberada exitosamente"
+                            "✅ Solicitud liberada exitosamente"
                     )
             );
 
@@ -111,7 +105,6 @@ public class AssignmentController {
         }
     }
 
-    // Completar una solicitud asignada - MANTENIDO igual
     @PostMapping("/complete/{requestId}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<?> completeRequest(@PathVariable Long requestId) {
@@ -137,7 +130,7 @@ public class AssignmentController {
                             updatedRequest.getId(), updatedRequest.getCode(),
                             updatedRequest.getAssignedCollectorId(), updatedRequest.getAssignedCollectorName(),
                             AssignmentStatus.COMPLETED, updatedRequest.getAssignedAt(), null,
-                            "Solicitud completada exitosamente"
+                            "✅ Solicitud completada exitosamente"
                     )
             );
 
@@ -146,7 +139,6 @@ public class AssignmentController {
         }
     }
 
-    // Obtener solicitudes asignadas a un recolector - MODIFICADO para usar DTO completo
     @GetMapping("/collector/{collectorId}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<List<CollectionRequestFullDTO>> getCollectorAssignments(@PathVariable Long collectorId) {

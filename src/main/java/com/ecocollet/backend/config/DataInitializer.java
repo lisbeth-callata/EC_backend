@@ -25,13 +25,10 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Crear usuarios de prueba si no existen
         createTestUsers();
         createTestRequests();
     }
-
     private void createTestUsers() {
-        // Usuario admin
         if (!userRepository.existsByEmail("admin@ecocollet.com")) {
             User admin = new User(
                     "Administrador",

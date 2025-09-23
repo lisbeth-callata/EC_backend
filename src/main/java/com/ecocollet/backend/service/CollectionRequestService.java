@@ -126,8 +126,6 @@ public class CollectionRequestService {
         return collectionRequestRepository.findByAssignedCollectorIdAndAssignmentStatus(collectorId, status);
     }
 
-    // NUEVOS MÉTODOS PARA MANEJAR DTOs COMPLETOS
-
     public List<CollectionRequestFullDTO> getAllRequestsWithUserInfo() {
         List<CollectionRequest> requests = collectionRequestRepository.findAllWithUser();
         return convertToFullDTOList(requests);

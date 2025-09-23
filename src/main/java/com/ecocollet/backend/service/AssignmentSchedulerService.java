@@ -16,7 +16,6 @@ public class AssignmentSchedulerService {
     @Autowired
     private CollectionRequestRepository collectionRequestRepository;
 
-    // Verificar asignaciones expiradas cada 5 minutos
     @Scheduled(fixedRate = 300000) // 5 minutos
     public void checkExpiredAssignments() {
         List<CollectionRequest> expiredAssignments = collectionRequestRepository
@@ -34,7 +33,6 @@ public class AssignmentSchedulerService {
         }
     }
 
-    // Limpiar asignaciones completadas antiguas cada día a medianoche
     @Scheduled(cron = "0 0 0 * * ?") // Cada día a medianoche
     public void cleanupOldAssignments() {
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
@@ -43,7 +41,5 @@ public class AssignmentSchedulerService {
                         AssignmentStatus.COMPLETED,
                         thirtyDaysAgo
                 );
-
-        // Aquí puedes implementar lógica de archivo o limpieza
     }
 }
