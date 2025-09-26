@@ -5,8 +5,8 @@ public class WeightSummaryDTO {
     private String userName;
     private String userLastname;
     private String userEmail;
-    private Long totalRequests;  // Cambiado de int a Long
-    private Double totalWeight;  // Cambiado de double a Double
+    private Long totalRequests;
+    private Double totalWeight;
 
     // Constructor que Hibernate necesita (EXACTO para la query)
     public WeightSummaryDTO(Long userId, String userName, String userLastname,

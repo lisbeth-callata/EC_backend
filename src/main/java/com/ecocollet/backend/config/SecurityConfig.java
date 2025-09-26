@@ -48,7 +48,12 @@ public class SecurityConfig {
                 "https://*.render.com",
                 "https://*.railway.app",
                 "https://*.googleapis.com",
-                "http://127.0.0.1:*"
+                "http://127.0.0.1:*",
+                "https://*.vercel.app",
+                "https://ec-frontend-livid.vercel.app",
+                "https://ec-frontend-*.vercel.app"
+
+
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
