@@ -25,60 +25,60 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        createTestUsers();
-        createTestRequests();
+//        createTestUsers();
+        //createTestRequests();
     }
-    private void createTestUsers() {
-        if (!userRepository.existsByEmail("admin@ecocollet.com")) {
-            User admin = new User(
-                    "Administrador",
-                    "Sistema",
-                    "admin",
-                    "admin@ecocollet.com",
-                    "123456789",
-                    "admin123",
-                    Role.ROLE_ADMIN
-            );
-            admin.setPassword(passwordEncoder.encode(admin.getPassword()));
-            userRepository.save(admin);
-            System.out.println("Usuario admin creado: admin@ecocollet.com / admin123");
-        }
-
-        // Recolector de prueba
-        if (!userRepository.existsByEmail("recolector@ecocollet.com")) {
-            User collector = new User(
-                    "Carlos",
-                    "Recolector",
-                    "carlos_col",
-                    "recolector@ecocollet.com",
-                    "987654321",
-                    "collector123",
-                    Role.ROLE_COLLECTOR
-            );
-            collector.setPassword(passwordEncoder.encode(collector.getPassword()));
-            userRepository.save(collector);
-            System.out.println("Usuario recolector creado: recolector@ecocollet.com / collector123");
-        }
-
-        // Usuario normal de prueba
-        if (!userRepository.existsByEmail("usuario@ecocollet.com")) {
-            User user = new User(
-                    "María",
-                    "Usuario",
-                    "maria_user",
-                    "usuario@ecocollet.com",
-                    "555555555",
-                    "user123",
-                    Role.ROLE_USER
-            );
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepository.save(user);
-            System.out.println("Usuario normal creado: usuario@ecocollet.com / user123");
-        }
-
-        // Verificar si existen otros usuarios de prueba y actualizarlos si es necesario
-        updateExistingTestUsers();
-    }
+//    private void createTestUsers() {
+//        if (!userRepository.existsByEmail("admin@ecocollet.com")) {
+//            User admin = new User(
+//                    "Administrador",
+//                    "Sistema",
+//                    "admin",
+//                    "admin@ecocollet.com",
+//                    "123456789",
+//                    "admin123",
+//                    Role.ROLE_ADMIN
+//            );
+//            admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+//            userRepository.save(admin);
+//            System.out.println("Usuario admin creado: admin@ecocollet.com / admin123");
+//        }
+//
+//        // Recolector de prueba
+//        if (!userRepository.existsByEmail("recolector@ecocollet.com")) {
+//            User collector = new User(
+//                    "Carlos",
+//                    "Recolector",
+//                    "carlos_col",
+//                    "recolector@ecocollet.com",
+//                    "987654321",
+//                    "collector123",
+//                    Role.ROLE_COLLECTOR
+//            );
+//            collector.setPassword(passwordEncoder.encode(collector.getPassword()));
+//            userRepository.save(collector);
+//            System.out.println("Usuario recolector creado: recolector@ecocollet.com / collector123");
+//        }
+//
+//        // Usuario normal de prueba
+//        if (!userRepository.existsByEmail("usuario@ecocollet.com")) {
+//            User user = new User(
+//                    "María",
+//                    "Usuario",
+//                    "maria_user",
+//                    "usuario@ecocollet.com",
+//                    "555555555",
+//                    "user123",
+//                    Role.ROLE_USER
+//            );
+//            user.setPassword(passwordEncoder.encode(user.getPassword()));
+//            userRepository.save(user);
+//            System.out.println("Usuario normal creado: usuario@ecocollet.com / user123");
+//        }
+//
+//        // Verificar si existen otros usuarios de prueba y actualizarlos si es necesario
+//        updateExistingTestUsers();
+//    }
 
     private void updateExistingTestUsers() {
         // Actualizar usuarios existentes que puedan tener campos null
@@ -107,64 +107,64 @@ public class DataInitializer implements CommandLineRunner {
         });
     }
 
-    private void createTestRequests() {
-        Optional<User> user = userRepository.findByEmail("usuario@ecocollet.com");
-        Optional<User> collector = userRepository.findByEmail("recolector@ecocollet.com");
-        if (user.isPresent() && collector.isPresent()) {
-            // Crear solicitudes de prueba
-            CollectionRequest request1 = new CollectionRequest();
-            request1.setUser(user.get());
-            request1.setMaterial("Plástico");
-            request1.setDescription("Botellas PET");
-            request1.setLatitude(-12.0464);
-            request1.setLongitude(-77.0428);
-            request1.setAddress("Av. Lima 123, Lima");
-            request1.setWeight(2.5);
-            request1.setStatus(RequestStatus.COLLECTED);
-            request1.setAssignmentStatus(AssignmentStatus.COMPLETED);
-            collectionRequestRepository.save(request1);
-
-            CollectionRequest request2 = new CollectionRequest();
-            request2.setUser(user.get());
-            request2.setMaterial("Vidrio");
-            request2.setDescription("Botellas de vidrio");
-            request2.setLatitude(-12.0564);
-            request2.setLongitude(-77.0328);
-            request2.setAddress("Av. Arequipa 456, Lima");
-            request2.setWeight(3.2);
-            request2.setStatus(RequestStatus.COLLECTED);
-            request2.setAssignmentStatus(AssignmentStatus.COMPLETED);
-            collectionRequestRepository.save(request2);
-
-            // Solicitud pendiente
-            CollectionRequest request3 = new CollectionRequest();
-            request3.setUser(user.get());
-            request3.setMaterial("Papel");
-            request3.setDescription("Periódicos y revistas");
-            request3.setLatitude(-12.0664);
-            request3.setLongitude(-77.0228);
-            request3.setAddress("Jr. Callao 789, Lima");
-            request3.setStatus(RequestStatus.PENDING);
-            request3.setAssignmentStatus(AssignmentStatus.AVAILABLE);
-            collectionRequestRepository.save(request3);
-
-            // ✅ NUEVA: Solicitud asignada a recolector (en progreso)
-            CollectionRequest request4 = new CollectionRequest();
-            request4.setUser(user.get());
-            request4.setMaterial("Cartón");
-            request4.setDescription("Cajas de cartón");
-            request4.setLatitude(-12.0764);
-            request4.setLongitude(-77.0128);
-            request4.setAddress("Av. Brasil 321, Lima");
-            request4.setStatus(RequestStatus.PENDING);
-            request4.setAssignmentStatus(AssignmentStatus.IN_PROGRESS);
-            request4.setAssignedCollectorId(collector.get().getId());
-            request4.setAssignedCollectorName(collector.get().getName() + " " + collector.get().getLastname());
-            request4.setAssignedAt(LocalDateTime.now().minusMinutes(5));
-            request4.setAssignmentExpiresAt(LocalDateTime.now().plusMinutes(10));
-            collectionRequestRepository.save(request4);
-
-            System.out.println("4 solicitudes de prueba creadas con diferentes estados de asignación");
-        }
-    }
+//    private void createTestRequests() {
+//        Optional<User> user = userRepository.findByEmail("usuario@ecocollet.com");
+//        Optional<User> collector = userRepository.findByEmail("recolector@ecocollet.com");
+//        if (user.isPresent() && collector.isPresent()) {
+//            // Crear solicitudes de prueba
+//            CollectionRequest request1 = new CollectionRequest();
+//            request1.setUser(user.get());
+//            request1.setMaterial("Plástico");
+//            request1.setDescription("Botellas PET");
+//            request1.setLatitude(-12.0464);
+//            request1.setLongitude(-77.0428);
+//            request1.setAddress("Av. Lima 123, Lima");
+//            request1.setWeight(2.5);
+//            request1.setStatus(RequestStatus.COLLECTED);
+//            request1.setAssignmentStatus(AssignmentStatus.COMPLETED);
+//            collectionRequestRepository.save(request1);
+//
+//            CollectionRequest request2 = new CollectionRequest();
+//            request2.setUser(user.get());
+//            request2.setMaterial("Vidrio");
+//            request2.setDescription("Botellas de vidrio");
+//            request2.setLatitude(-12.0564);
+//            request2.setLongitude(-77.0328);
+//            request2.setAddress("Av. Arequipa 456, Lima");
+//            request2.setWeight(3.2);
+//            request2.setStatus(RequestStatus.COLLECTED);
+//            request2.setAssignmentStatus(AssignmentStatus.COMPLETED);
+//            collectionRequestRepository.save(request2);
+//
+//            // Solicitud pendiente
+//            CollectionRequest request3 = new CollectionRequest();
+//            request3.setUser(user.get());
+//            request3.setMaterial("Papel");
+//            request3.setDescription("Periódicos y revistas");
+//            request3.setLatitude(-12.0664);
+//            request3.setLongitude(-77.0228);
+//            request3.setAddress("Jr. Callao 789, Lima");
+//            request3.setStatus(RequestStatus.PENDING);
+//            request3.setAssignmentStatus(AssignmentStatus.AVAILABLE);
+//            collectionRequestRepository.save(request3);
+//
+//            // ✅ NUEVA: Solicitud asignada a recolector (en progreso)
+//            CollectionRequest request4 = new CollectionRequest();
+//            request4.setUser(user.get());
+//            request4.setMaterial("Cartón");
+//            request4.setDescription("Cajas de cartón");
+//            request4.setLatitude(-12.0764);
+//            request4.setLongitude(-77.0128);
+//            request4.setAddress("Av. Brasil 321, Lima");
+//            request4.setStatus(RequestStatus.PENDING);
+//            request4.setAssignmentStatus(AssignmentStatus.IN_PROGRESS);
+//            request4.setAssignedCollectorId(collector.get().getId());
+//            request4.setAssignedCollectorName(collector.get().getName() + " " + collector.get().getLastname());
+//            request4.setAssignedAt(LocalDateTime.now().minusMinutes(5));
+//            request4.setAssignmentExpiresAt(LocalDateTime.now().plusMinutes(10));
+//            collectionRequestRepository.save(request4);
+//
+//            System.out.println("4 solicitudes de prueba creadas con diferentes estados de asignación");
+//        }
+//    }
 }
