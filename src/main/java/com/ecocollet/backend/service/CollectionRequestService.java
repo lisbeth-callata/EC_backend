@@ -43,7 +43,7 @@ public class CollectionRequestService {
     }
 
     public List<CollectionRequest> getTodayRequests() {
-        return collectionRequestRepository.findTodayRequests();
+        return collectionRequestRepository.findTodayRequests(LocalDateTime.now());
     }
 
     public List<CollectionRequest> searchRequests(String searchTerm) {
@@ -132,7 +132,7 @@ public class CollectionRequestService {
     }
 
     public List<CollectionRequestFullDTO> getTodayRequestsWithUserInfo() {
-        List<CollectionRequest> requests = collectionRequestRepository.findTodayRequests();
+        List<CollectionRequest> requests = collectionRequestRepository.findTodayRequests(LocalDateTime.now());
         return convertToFullDTOList(requests);
     }
 

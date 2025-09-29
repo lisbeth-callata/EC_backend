@@ -34,8 +34,8 @@ public interface CollectionRequestRepository extends JpaRepository<CollectionReq
     List<CollectionRequest> findByAssignedCollectorIdAndAssignmentStatus(
             Long collectorId, AssignmentStatus status);
 
-    @Query("SELECT cr FROM CollectionRequest cr JOIN FETCH cr.user WHERE DATE(cr.createdAt) = CURRENT_DATE")
-    List<CollectionRequest> findTodayRequests();
+    @Query("SELECT cr FROM CollectionRequest cr JOIN FETCH cr.user WHERE DATE(cr.createdAt) = DATE(:targetDate)")
+    List<CollectionRequest> findTodayRequests(@Param("targetDate") LocalDateTime targetDate);
 
     @Query("SELECT cr FROM CollectionRequest cr JOIN FETCH cr.user WHERE cr.code LIKE %:searchTerm% OR cr.user.name LIKE %:searchTerm% OR cr.user.lastname LIKE %:searchTerm%")
     List<CollectionRequest> findByCodeOrUserName(@Param("searchTerm") String searchTerm);

@@ -25,7 +25,7 @@ public class CollectionRequestController {
     @Autowired
     private UserService userService;
 
-    // Obtener todas las solicitudes (solo admin)
+    // Obtener todas las solicitudes
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('COLLECTOR')")
     public ResponseEntity<List<CollectionRequestFullDTO>> getAllRequests() {
