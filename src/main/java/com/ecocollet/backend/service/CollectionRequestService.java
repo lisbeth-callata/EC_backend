@@ -69,6 +69,14 @@ public class CollectionRequestService {
     public List<CollectionRequest> getExpiredAssignments() {
         return collectionRequestRepository.findByAssignmentStatus(AssignmentStatus.EXPIRED);
     }
+    public List<CollectionRequest> getAllPendingRequests() {
+        return collectionRequestRepository.findAllPendingRequestsOrderedByDate();
+    }
+
+    public List<CollectionRequestFullDTO> getAllPendingRequestsWithUserInfo() {
+        List<CollectionRequest> requests = collectionRequestRepository.findAllPendingRequestsOrderedByDate();
+        return convertToFullDTOList(requests);
+    }
 
     public CollectionRequest createRequest(CollectionRequest request, User user) {
         String requestCode = "ECO-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();

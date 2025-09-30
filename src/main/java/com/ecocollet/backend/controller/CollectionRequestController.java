@@ -127,4 +127,11 @@ public class CollectionRequestController {
     public ResponseEntity<List<CollectionRequestFullDTO>> getAvailableRequests() {
         return ResponseEntity.ok(collectionRequestService.getAvailableRequestsWithUserInfo());
     }
+
+    // Obtener todas las solicitudes pendientes ordenadas
+    @GetMapping("/pending")
+    @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
+    public ResponseEntity<List<CollectionRequestFullDTO>> getAllPendingRequests() {
+        return ResponseEntity.ok(collectionRequestService.getAllPendingRequestsWithUserInfo());
+    }
 }
