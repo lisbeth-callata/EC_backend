@@ -53,7 +53,6 @@ public interface CollectionRequestRepository extends JpaRepository<CollectionReq
     List<CollectionRequest> findAllWithUser();
 
     @Query("SELECT cr FROM CollectionRequest cr JOIN FETCH cr.user " +
-            "WHERE cr.status = 'PENDING' " +
             "ORDER BY cr.createdAt DESC")
-    List<CollectionRequest> findAllPendingRequestsOrderedByDate();
+    List<CollectionRequest> findAllRequestsOrderedByDate();
 }

@@ -70,11 +70,11 @@ public class CollectionRequestService {
         return collectionRequestRepository.findByAssignmentStatus(AssignmentStatus.EXPIRED);
     }
     public List<CollectionRequest> getAllPendingRequests() {
-        return collectionRequestRepository.findAllPendingRequestsOrderedByDate();
+        return collectionRequestRepository.findAllRequestsOrderedByDate();
     }
 
     public List<CollectionRequestFullDTO> getAllPendingRequestsWithUserInfo() {
-        List<CollectionRequest> requests = collectionRequestRepository.findAllPendingRequestsOrderedByDate();
+        List<CollectionRequest> requests = collectionRequestRepository.findAllRequestsOrderedByDate();
         return convertToFullDTOList(requests);
     }
 
