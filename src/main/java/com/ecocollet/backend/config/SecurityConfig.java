@@ -51,7 +51,10 @@ public class SecurityConfig {
                 "http://127.0.0.1:*",
                 "https://*.vercel.app",
                 "https://ec-frontend-livid.vercel.app",
-                "https://ec-frontend-*.vercel.app"
+                "https://ec-frontend-*.vercel.app",
+                "https://*.netlify.app",
+                "https://ecocollet.netlify.app",
+                "https://ecocollet-admin.netlify.app"
 
 
         ));
