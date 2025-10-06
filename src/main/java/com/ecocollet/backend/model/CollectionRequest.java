@@ -43,6 +43,26 @@ public class CollectionRequest {
     @Column(name = "address")
     private String address;
 
+    @Size(max = 100)
+    @Column(name = "district")
+    private String district;
+
+    @Size(max = 100)
+    @Column(name = "province")
+    private String province;
+
+    @Size(max = 100)
+    @Column(name = "region")
+    private String region;
+
+    @Size(max = 500)
+    @Column(name = "address_user")
+    private String addressUser;
+
+    @Size(max = 500)
+    @Column(name = "reference")
+    private String reference;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private RequestStatus status;
@@ -113,6 +133,21 @@ public class CollectionRequest {
 
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
+
+    public String getDistrict() { return district; }
+    public void setDistrict(String district) { this.district = district; }
+
+    public String getProvince() { return province; }
+    public void setProvince(String province) { this.province = province; }
+
+    public String getRegion() { return region; }
+    public void setRegion(String region) { this.region = region; }
+
+    public String getAddressUser() { return addressUser; }
+    public void setAddressUser(String addressUser) { this.addressUser = addressUser; }
+
+    public String getReference() { return reference; }
+    public void setReference(String reference) { this.reference = reference; }
 
     // CAMBIO: Getter y Setter para RequestStatus (enum)
     public RequestStatus getStatus() { return status; }

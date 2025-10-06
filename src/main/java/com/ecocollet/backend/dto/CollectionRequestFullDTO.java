@@ -12,6 +12,12 @@ public class CollectionRequestFullDTO {
     private Double latitude;
     private Double longitude;
     private String address;
+    private String district;
+    private String province;
+    private String region;
+    private String addressUser;
+    private String reference;
+
     private RequestStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -35,7 +41,8 @@ public class CollectionRequestFullDTO {
     public CollectionRequestFullDTO() {}
 
     public CollectionRequestFullDTO(Long id, String code, String material, String description,
-                                    Double latitude, Double longitude, String address,
+                                    Double latitude, Double longitude, String address, String district, String province, String region,
+                                    String addressUser, String reference,
                                     RequestStatus status, LocalDateTime createdAt,
                                     LocalDateTime updatedAt, Double weight, Long userId,
                                     String userName, String userLastname, String userEmail,
@@ -49,6 +56,11 @@ public class CollectionRequestFullDTO {
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
+        this.district = district;
+        this.province = province;
+        this.region = region;
+        this.addressUser = addressUser;
+        this.reference = reference;
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -85,6 +97,21 @@ public class CollectionRequestFullDTO {
 
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
+
+    public String getDistrict() { return district; }
+    public void setDistrict(String district) { this.district = district; }
+
+    public String getProvince() { return province; }
+    public void setProvince(String province) { this.province = province; }
+
+    public String getRegion() { return region; }
+    public void setRegion(String region) { this.region = region; }
+
+    public String getAddressUser() { return addressUser; }
+    public void setAddressUser(String addressUser) { this.addressUser = addressUser; }
+
+    public String getReference() { return reference; }
+    public void setReference(String reference) { this.reference = reference; }
 
     public RequestStatus getStatus() { return status; }
     public void setStatus(RequestStatus status) { this.status = status; }

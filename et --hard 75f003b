@@ -1,0 +1,27 @@
+[33m314d732[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m /Corrección para JwtUtils 2
+[33m70f757b[m /Corrección para JwtUtils
+[33me46395a[m /mejora del login
+[33m75f003b[m /filtros
+[33m04e3970[m /PENDING
+[33mabc9853[m V.15 Actualizacion de fecha
+[33m9107034[m Fecha actual
+[33m5d58636[m V14. data initializer comentado
+[33m0aaa617[m V13. vercel
+[33mf568d84[m V12. Subiendo backend con configuración linux
+[33md583658[m V11
+[33m6e9c6df[m V10
+[33m1edb934[m V9
+[33m6cab12c[m V8
+[33m4e50b88[m V7
+[33m1815386[m V8. eliminar
+[33m17605d9[m V6
+[33m5f57a62[m V5
+[33m302b22d[m V4
+[33m64e7ef2[m V3
+[33mb07d51b[m Add profile endpoint v2
+[33m7daf342[m Add profile endpoint
+[33m8b0f962[m V1: auth
+[33m62aa083[m Update application.properties
+[33m7b8f20d[m Update Dockerfile
+[33m28efb14[m Create Dockerfile
+[33m70fd15a[m Primer commit: subir proyecto EC_backend

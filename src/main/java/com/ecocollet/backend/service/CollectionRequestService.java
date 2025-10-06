@@ -106,6 +106,21 @@ public class CollectionRequestService {
             if (requestDetails.getAddress() != null) {
                 request.setAddress(requestDetails.getAddress());
             }
+            if (requestDetails.getDistrict() != null) {
+                request.setDistrict(requestDetails.getDistrict());
+            }
+            if (requestDetails.getProvince() != null) {
+                request.setProvince(requestDetails.getProvince());
+            }
+            if (requestDetails.getRegion() != null) {
+                request.setRegion(requestDetails.getRegion());
+            }
+            if (requestDetails.getAddressUser() != null) {
+                request.setAddressUser(requestDetails.getAddressUser());
+            }
+            if (requestDetails.getReference() != null) {
+                request.setReference(requestDetails.getReference());
+            }
             if (requestDetails.getStatus() != null) {
                 request.setStatus(requestDetails.getStatus());
             }
@@ -169,6 +184,11 @@ public class CollectionRequestService {
         dto.setLatitude(request.getLatitude());
         dto.setLongitude(request.getLongitude());
         dto.setAddress(request.getAddress());
+        dto.setDistrict(request.getDistrict());
+        dto.setProvince(request.getProvince());
+        dto.setRegion(request.getRegion());
+        dto.setAddressUser(request.getAddressUser());
+        dto.setReference(request.getReference());
         dto.setStatus(request.getStatus());
         dto.setCreatedAt(request.getCreatedAt());
         dto.setUpdatedAt(request.getUpdatedAt());
