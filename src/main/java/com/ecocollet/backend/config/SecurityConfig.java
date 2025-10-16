@@ -54,7 +54,9 @@ public class SecurityConfig {
                 "https://ec-frontend-*.vercel.app",
                 "https://*.netlify.app",
                 "https://ecocollet.netlify.app",
-                "https://ecocollet-admin.netlify.app"
+                "https://ecocollet-admin.netlify.app",
+                "https://lisbeth-callata.github.io",
+                "https://lisbeth-callata.github.io/EC_frontend"
 
 
         ));
