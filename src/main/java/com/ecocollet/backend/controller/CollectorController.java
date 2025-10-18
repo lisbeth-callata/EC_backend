@@ -57,7 +57,6 @@ public class CollectorController {
             @PathVariable Long requestId,
             @RequestParam(required = false) Double weight,
             @RequestParam(required = false) String status) {
-
         try {
             CollectionRequest request = collectionRequestService.getRequestById(requestId)
                     .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
@@ -69,17 +68,14 @@ public class CollectorController {
                 try {
                     RequestStatus newStatus = RequestStatus.valueOf(status.toUpperCase());
                     request.setStatus(newStatus);
-
                     if (newStatus == RequestStatus.COLLECTED) {
                         request.setAssignmentStatus(AssignmentStatus.COMPLETED);
-                        request.setAssignedCollectorId(null);
-                        request.setAssignedCollectorName(null);
+                        request.setAssignmentExpiresAt(null);
                     }
                 } catch (IllegalArgumentException e) {
                     return ResponseEntity.badRequest().body("Estado no válido: " + status);
                 }
             }
-
             CollectionRequest updatedRequest = collectionRequestService.updateRequest(requestId, request);
             return ResponseEntity.ok(updatedRequest);
 

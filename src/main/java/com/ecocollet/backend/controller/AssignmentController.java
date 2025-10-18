@@ -121,10 +121,9 @@ public class AssignmentController {
                     request.getAssignmentStatus() != AssignmentStatus.IN_PROGRESS) {
                 return ResponseEntity.badRequest().body("La solicitud no está en estado asignado");
             }
-
             request.setAssignmentStatus(AssignmentStatus.COMPLETED);
+            request.setAssignmentExpiresAt(null);
             CollectionRequest updatedRequest = collectionRequestService.updateRequest(requestId, request);
-
             return ResponseEntity.ok(
                     new AssignmentResponseDTO(
                             updatedRequest.getId(), updatedRequest.getCode(),
@@ -133,7 +132,6 @@ public class AssignmentController {
                             "✅ Solicitud completada exitosamente"
                     )
             );
-
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
@@ -160,7 +158,7 @@ public class AssignmentController {
         return ResponseEntity.ok(dtos);
     }
 
-    // Actualizar estado de una asignación - MANTENIDO igual
+    // Actualizar estado de una asignación
     @PutMapping("/{requestId}/status/{status}")
     @PreAuthorize("hasRole('COLLECTOR') or hasRole('ADMIN')")
     public ResponseEntity<?> updateAssignmentStatus(@PathVariable Long requestId,

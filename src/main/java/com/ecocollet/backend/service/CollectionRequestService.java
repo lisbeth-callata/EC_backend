@@ -91,6 +91,10 @@ public class CollectionRequestService {
 
     public CollectionRequest updateRequest(Long id, CollectionRequest requestDetails) {
         return collectionRequestRepository.findById(id).map(request -> {
+            Long currentCollectorId = request.getAssignedCollectorId();
+            String currentCollectorName = request.getAssignedCollectorName();
+            LocalDateTime currentAssignedAt = request.getAssignedAt();
+
             if (requestDetails.getMaterial() != null) {
                 request.setMaterial(requestDetails.getMaterial());
             }
@@ -123,10 +127,27 @@ public class CollectionRequestService {
             }
             if (requestDetails.getStatus() != null) {
                 request.setStatus(requestDetails.getStatus());
+
+                if (requestDetails.getStatus() == RequestStatus.CANCELLED) {
+                    request.setAssignedCollectorId(null);
+                    request.setAssignedCollectorName(null);
+                    request.setAssignedAt(null);
+                    request.setAssignmentExpiresAt(null);
+                    request.setAssignmentStatus(AssignmentStatus.AVAILABLE);
+                }
             }
             if (requestDetails.getWeight() != null) {
                 request.setWeight(requestDetails.getWeight());
             }
+
+            if (requestDetails.getStatus() == RequestStatus.COLLECTED) {
+                request.setAssignmentStatus(AssignmentStatus.COMPLETED);
+                request.setAssignedCollectorId(currentCollectorId);
+                request.setAssignedCollectorName(currentCollectorName);
+                request.setAssignedAt(currentAssignedAt);
+                request.setAssignmentExpiresAt(null);
+            }
+
             request.setUpdatedAt(LocalDateTime.now());
 
             return collectionRequestRepository.save(request);
